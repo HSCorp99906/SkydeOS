@@ -17,6 +17,17 @@ org 0x7C00
 ; are being used, hence we set them to zero
 ; to initalize them and put them in a 
 ; "known" state.
+xor bx, bx
+mov ds, bx 
+mov es, bx         
+mov ss, bx
+
+; Setup our stack.
+mov bp, 0x9C00      ; 0x2000 past our bootloader.
+mov sp, bp
+
+cld     ; Set direction flag to make strings start from the lowest address.
+
 %define KERNEL_OFFSET 0x1000
 
 _start:
@@ -46,7 +57,21 @@ _start:
     mov dl, [BOOT_DRIVE]
     call disk_load
 
-    jmp $      ; Jump to current address.
+    cli
+    lgdt [gdt_desc]
+
+    mov eax, cr0
+    or eax, 0x1
+    mov cr0, eax
+
+    ; We are now in 32-bit protected mode.
+
+    ; CS is supposed to contain current code descriptor in protected mode.
+    ; but it doesn't currently. To fix that we make a far jump to our code descriptor
+    ; offsetted by our label.
+    ; This far jump also flushes the CPU's pipeline.
+
+    jmp CODE_SEG:init_pm
 
 BOOT_DRIVE: db 0
 
@@ -151,6 +176,19 @@ boot_choice: db 0x0D, 0x0A, "[B]oot", 0x0D, 0x0A, 0
 reboot_choice: db "[R]eboot", 0x0D, 0x0A, 0
 boot_msg: db "Booting SkydeOS..", 0x0d, 0x0A, 0
 disk_error_msg: db "FATAL: Failed to read from disk.", 0x0D, 0x0A, 0
+
+bits 32
+
+init_pm:
+    ; Our segments are incorrect so we reset them.
+    mov ax, DATA_SEG
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    jmp _PM
+
+_PM:
+    hlt
 
 times 510-($-$$) db 0
 dw 0xAA55
