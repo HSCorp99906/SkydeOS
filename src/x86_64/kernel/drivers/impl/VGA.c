@@ -1,11 +1,9 @@
 #include "../VGA.h"
 
 
-void vga_puts(const char* str) {
-    static char* vga_buf = (char*)0xB8000;
-
+void vga_puts(const char* str, char** vga_buf) {
     for (int i = 0; i < strlen(str); ++i) {
-        *vga_buf = str[i];
-        vga_buf += 2;
-    }
+        **vga_buf = str[i];
+        *vga_buf += 2;
+    } 
 }
