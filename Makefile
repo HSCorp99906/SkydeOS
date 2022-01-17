@@ -1,6 +1,6 @@
 all:
 	@ ##
-	@ # Buildscruot for PickleOS.
+	@ # Buildscruot for SkydeOS.
 	@ #
 	@ # @Makefile
 	@ # @version 1.0
