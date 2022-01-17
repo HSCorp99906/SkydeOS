@@ -1,4 +1,7 @@
 global _start
+extern kmain
 
-_start:
+section .text
+_start:    
+    mov [0xB8000], byte 'X'
     jmp $
