@@ -20,7 +20,7 @@ burn:
 	sudo dd if=SkydeOS.img of=/dev/sdb
 
 run:
-	sudo qemu-system-x86_64 -hda /dev/sdb -monitor stdio
+	sudo qemu-system-x86_64 -fda SkydeOS.img -monitor stdio
 
 runusb:
 	sudo qemu-system-x86_64 -hda /dev/sdb -monitor stdio
