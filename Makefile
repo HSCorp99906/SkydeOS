@@ -15,8 +15,12 @@ all:
 	sudo dd if=/dev/zero of=SkydeOS.img bs=1024 count=1440
 	@ # Put the OS stuff in the image.
 	sudo dd if=bin/SkydeOS.bin of=SkydeOS.img
+
+burn:
 	sudo dd if=SkydeOS.img of=/dev/sdb
 
-
 run:
+	sudo qemu-system-x86_64 -hda /dev/sdb -monitor stdio
+
+runusb:
 	sudo qemu-system-x86_64 -hda /dev/sdb -monitor stdio

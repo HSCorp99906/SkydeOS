@@ -54,6 +54,17 @@ _start:
     mov si, boot_msg
     call puts
 
+    ; Delay.
+    mov cx, 0xF
+    mov dx, 0x4240
+    mov ah, 0x86
+    int 0x15
+
+    mov cx, 0xF
+    mov dx, 0x4240
+    mov ah, 0x86
+    int 0x15
+
     ; Read kernel into memory.
     mov bx, KERNEL_OFFSET
     mov dh, 0x02
