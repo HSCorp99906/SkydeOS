@@ -4,8 +4,8 @@ all:
 	@ #
 	@ # @Makefile
 	@ # @version 1.0
-	nasm -felf src/x86_64/kernel/kasm.S -o obj/kasm.o
-	i686-elf-ld -Tlink.ld obj/kasm.o -o bin/kasm.bin
+	nasm -felf src/x86_64/kernel/kasm.S -o bin/kasm.o
+	i686-elf-ld -Tlink.ld obj/kasm.o --oformat binary -o bin/kasm.bin
 	nasm -fbin src/x86_64/boot/bootloader.S -o bin/bootloader.bin
 	cat bin/bootloader.bin bin/kasm.bin > bin/SkydeOS.bin
 	@ # Prepare the image.

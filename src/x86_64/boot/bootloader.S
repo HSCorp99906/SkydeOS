@@ -17,6 +17,9 @@ org 0x7C00
 ; are being used, hence we set them to zero
 ; to initalize them and put them in a 
 ; "known" state.
+; Remember, our bootloader is loaded at 0x7C00:0.
+; So.. segment * 0x10 + offset.
+
 xor bx, bx
 mov ds, bx 
 mov es, bx         
@@ -181,14 +184,24 @@ bits 32
 
 init_pm:
     ; Our segments are incorrect so we reset them.
-    mov ax, DATA_SEG
+    mov ax, DATA_SEG        ; Set AX to data segments.
     mov ds, ax
-    mov es, ax
     mov ss, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    mov ebp, 0x9000
+    mov esp, ebp
+
     jmp _PM
 
 _PM:
+    call KERNEL_OFFSET
     hlt
 
+; Pads the sector with zeros so it is exactly 512 bytes.
 times 510-($-$$) db 0
+
+; Boot signiture to tell BIOS this is a valid MBR.
 dw 0xAA55
