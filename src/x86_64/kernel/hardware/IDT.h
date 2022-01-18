@@ -47,6 +47,16 @@ __attribute__((interrupt)) void default_excp_handler(int_frame_32_t* int_frame_3
 }
 
 
+__attribute__((interrupt)) void default_excp_handler_err_code(int_frame_32_t* int_frame_32, uint32_t error_code) {
+    vgaClearScreen();
+    vgaFillScreen(0x04, 0x07);
+    const char const* ERROR_MSG = "A fatal exception has occurred.";
+    char* vga = (char*)0xB8000;
+    vga_puts(ERROR_MSG, &vga);
+}
+
+__attribute__((interrupt)) void default_int_handler(int_frame_32_t* int_frame_32) { /* NOT IMPLEMENTED FOR NOW. */ }
+
 // Add an ISR to IDT.
 void set_idt_desc_32(uint8_t entry_number, void* isr, uint8_t flags) {
     idt_entry_t* descriptor = &idt32[entry_number];
@@ -57,6 +67,33 @@ void set_idt_desc_32(uint8_t entry_number, void* isr, uint8_t flags) {
     descriptor->reserved = 0;           // Reserved must be 0.
     descriptor->attributes = flags;
     descriptor->isr_high = ((uint32_t)isr >> 16) & 0xFFFF;     // High 16 bits.
+}
+
+void init_idt_32() {
+    // Each descripter is 8 bytes, limit is 255.
+    idtr32.limit = (uint16_t)(8 * 255);
+    idtr32.base = (uint32_t)&idt32[0];
+
+    // Setup exception handling (IRS 0-31).
+
+    for (uint8_t entry = 0; entry < 32; ++entry) {
+        if (entry == 8 || entry == 10 || entry == 11 || entry == 12 || entry == 13  ||
+            entry == 14  || entry == 17 || entry == 21) {
+            // Exception takes error code.
+            set_idt_desc_32(entry, default_excp_handler_err_code, TRAP_GATE_FLAGS);
+        } else {
+            // Exception doesn't take error code.
+            set_idt_desc_32(entry, default_excp_handler, TRAP_GATE_FLAGS);
+        }
+    }
+
+    // Setup regular interrupts.
+    
+    for (uint16_t entry = 32; entry < 256; ++entry) {
+        set_idt_desc_32(entry, default_int_handler, INT_GATE_FLAGS);
+    }
+
+    __asm__ __volatile__("lidt (%0)" : : "memory"(idtr32));
 }
 
 
