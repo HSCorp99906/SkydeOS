@@ -1,5 +1,5 @@
 #include "drivers/VGA.h"
-#include "hardware/IDT.h"
+#include "interrupts/IDT.h"
 #include "util/exceptions.h"
 
 char* vga = (char*)0xB8000 + 160;

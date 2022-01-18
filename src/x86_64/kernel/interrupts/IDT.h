@@ -29,6 +29,11 @@ typedef struct {
 idt_entry_t idt32[256];     // The actual IDT.
 idtr_t idtr32;
 
+
+/*
+ * Interrupt frame will be pushed
+ * to stack once an interrupt happens.
+ */
 typedef struct {
     uint32_t eip;
     uint32_t cs;
@@ -96,6 +101,7 @@ void init_idt_32() {
         set_idt_desc_32(entry, default_int_handler, INT_GATE_FLAGS);
     }
 
+    // Load IDT.
     __asm__ __volatile__("lidt (%0)" : : "memory"(idtr32));  // Loads IDT.
 }
 

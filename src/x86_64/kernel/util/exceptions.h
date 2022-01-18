@@ -1,7 +1,7 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
-#include "../hardware/IDT.h"
+#include "../interrupts/IDT.h"
 #include "../drivers/VGA.h"
 
 __attribute__((interrupt)) void div_by_0_handler(int_frame_32_t* int_frame_32) {
