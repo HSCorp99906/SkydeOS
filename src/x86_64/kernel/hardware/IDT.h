@@ -41,34 +41,37 @@ typedef struct {
 __attribute__((interrupt)) void default_excp_handler(int_frame_32_t* int_frame_32) {
     vgaClearScreen();
     vgaFillScreen(0x04, 0x07);
-    const char const* ERROR_MSG = "A fatal exception has occurred.";
+    const char const* ERROR_MSG = "A FATAL EXCEPTION OCCURRED - SYSTEM HALTED.";
     char* vga = (char*)0xB8000;
     vga_puts(ERROR_MSG, &vga);
+    __asm__("hlt");
 }
 
 
 __attribute__((interrupt)) void default_excp_handler_err_code(int_frame_32_t* int_frame_32, uint32_t error_code) {
     vgaClearScreen();
     vgaFillScreen(0x04, 0x07);
-    const char const* ERROR_MSG = "A fatal exception has occurred.";
+    const char const* ERROR_MSG = "A FATAL EXCEPTION OCCURRED - SYSTEM HALTED.";
     char* vga = (char*)0xB8000;
     vga_puts(ERROR_MSG, &vga);
+    __asm__("hlt");
 }
 
 __attribute__((interrupt)) void default_int_handler(int_frame_32_t* int_frame_32) { /* NOT IMPLEMENTED FOR NOW. */ }
 
 // Add an ISR to IDT.
 void set_idt_desc_32(uint8_t entry_number, void* isr, uint8_t flags) {
-    idt_entry_t* descriptor = &idt32[entry_number];
+    idt_entry_t* descriptor = &idt32[entry_number];     // Interrupt descriptor.
     
     // Low 16 bits of ISR address.
-    descriptor->isr_low = (uint32_t)isr & 0xFFFF;   
+    descriptor->isr_low = (uint32_t)isr & 0xFFFF;
     descriptor->kernel_cs = 0x08;       // Address of kernel code segment.
     descriptor->reserved = 0;           // Reserved must be 0.
     descriptor->attributes = flags;
     descriptor->isr_high = ((uint32_t)isr >> 16) & 0xFFFF;     // High 16 bits.
 }
 
+// Setup default exceptions.
 void init_idt_32() {
     // Each descripter is 8 bytes, limit is 255.
     idtr32.limit = (uint16_t)(8 * 255);
@@ -93,7 +96,7 @@ void init_idt_32() {
         set_idt_desc_32(entry, default_int_handler, INT_GATE_FLAGS);
     }
 
-    __asm__ __volatile__("lidt (%0)" : : "memory"(idtr32));
+    __asm__ __volatile__("lidt (%0)" : : "memory"(idtr32));  // Loads IDT.
 }
 
 
