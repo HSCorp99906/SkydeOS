@@ -67,7 +67,7 @@ _start:
 
     ; Read kernel into memory.
     mov bx, KERNEL_OFFSET
-    mov dh, 0x05
+    mov dh, 0x06
     mov dl, [BOOT_DRIVE]
     call disk_load
 

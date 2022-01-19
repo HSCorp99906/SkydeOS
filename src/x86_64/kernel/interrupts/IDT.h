@@ -45,8 +45,7 @@ typedef struct {
 // Default exception handler (no error code).
 // Attribute Interrupt makes the function use IRET instead of RET.
 __attribute__((interrupt)) void default_excp_handler(int_frame_32_t* int_frame_32) {
-    vgaClearScreen();
-    vgaFillScreen(0x04, 0x07);
+    __asm__ __volatile__("int $0x24");
     const char const* ERROR_MSG = "A FATAL EXCEPTION OCCURRED - SYSTEM HALTED.";
     char* vga = (char*)0xB8000;
     vga_puts(ERROR_MSG, &vga, 1);
@@ -55,8 +54,7 @@ __attribute__((interrupt)) void default_excp_handler(int_frame_32_t* int_frame_3
 
 
 __attribute__((interrupt)) void default_excp_handler_err_code(int_frame_32_t* int_frame_32, uint32_t error_code) {
-    vgaClearScreen();
-    vgaFillScreen(0x04, 0x07);
+    __asm__ __volatile__("int $0x24");
     const char const* ERROR_MSG = "A FATAL EXCEPTION OCCURRED - SYSTEM HALTED.";
     char* vga = (char*)0xB8000;
     vga_puts(ERROR_MSG, &vga, 1);
