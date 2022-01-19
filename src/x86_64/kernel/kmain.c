@@ -4,6 +4,7 @@
 #include "interrupts/syscalls.h"
 #include "interrupts/interrupts.h"
 #include "util/exceptions.h"
+#include "sys/autostart.h"
 
 char* vga = (char*)0xB8000;
 
@@ -31,8 +32,9 @@ int kmain() {
     set_idt_desc_32(0x79, asm_syscall_dispatcher, INT_GATE_USER_FLAGS);
     set_idt_desc_32(0x32, sys_restart, INT_GATE_FLAGS);
     set_idt_desc_32(0xC8, red_screen, INT_GATE_FLAGS);
-
-    __asm__ __volatile__("mov $0, %eax; int $0x79");
+    set_idt_desc_32(0xC9, move_mouse, INT_GATE_FLAGS);
+    
+    __autostart();
 
     return 0;
 }
