@@ -14,6 +14,11 @@ int kmain() {
     vgaFillScreen(0x07, 0x04);
     vga_puts(greet, &vga, 1); 
 
+    // Mask off all hardware interrupts.
+    disable_pic();
+
+    remap_pic();
+
     // Setup interrupts.
     init_idt_32();
 

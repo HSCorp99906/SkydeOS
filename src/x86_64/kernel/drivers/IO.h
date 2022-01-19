@@ -3,5 +3,6 @@
 
 unsigned char portByteIn(unsigned short port);
 void portByteOut(unsigned short port, unsigned char data);
+void io_wait();
 
 #endif

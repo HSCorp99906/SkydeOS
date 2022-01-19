@@ -52,4 +52,42 @@ void set_irq_mask(uint8_t irq) {
 }
 
 
+// Remap PIC to use interrupts above 15.
+
+void remap_pic(void) {
+    uint8_t pic_1_mask, pic_2_mask;
+
+    // Save current masks
+    pic_1_mask = portByteIn(PIC_1_DATA);
+    pic_2_mask = portByteIn(PIC_2_DATA);
+
+    // ICW 1 (Initialization control word) - bit 0 = send up to ICW 4, bit 4 = initialize PIC
+    portByteOut(PIC_1_CMD, 0x11);
+    io_wait();
+    portByteOut(PIC_2_CMD, 0x11);
+    io_wait();
+
+    // ICW 2 - Where to map the base interrupt in the IDT
+    portByteOut(PIC_1_DATA, NEW_IRQ_0);
+    io_wait();
+    portByteOut(PIC_2_DATA, NEW_IRQ_8);
+    io_wait();
+    
+    // ICW 3 - Where to map PIC2 to the IRQ line in PIC1; Mapping PIC2 to IRQ 2
+    portByteOut(PIC_1_DATA, 0x4);  // Bit # (0-based) - 0100 = bit 2 = IRQ2
+    io_wait();
+    portByteOut(PIC_2_DATA, 0x2);  // Binary # for IRQ in PIC1, 0010 = 2
+    io_wait();
+   
+    // ICW 4 - Set x86 mode
+    portByteOut(PIC_1_DATA, 0x1); 
+    io_wait();
+    portByteOut(PIC_2_DATA, 0x1); 
+    io_wait();
+
+    // Save current masks
+    portByteOut(PIC_1_DATA, pic_1_mask);
+    portByteOut(PIC_2_DATA, pic_2_mask);
+}
+
 #endif
