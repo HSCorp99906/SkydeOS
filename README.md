@@ -7,14 +7,15 @@ that I am currently developing.
 
 #### Syscalls
 
-```
-int 0x79 
-```
 interrupt to IDT entry 0x79
 which is a syscall dispatcher.
 
 You would put the service number in 
 EAX.
+
+```
+int 0x79 
+```
 
 Current services available:
 
@@ -22,18 +23,19 @@ Current services available:
 
 ### Interrupts for drivers
 
-```
-int 0x2A
-```
 
 sys_restart
 
 ```
-int 0x24
+int 0x2A
 ```
 
 red_screen.
 Used for errors.
+
+```
+int 0x24
+```
 
 ### How do I get it working?
 
