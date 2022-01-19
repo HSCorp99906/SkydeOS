@@ -1,5 +1,6 @@
 #include "drivers/VGA.h"
 #include "interrupts/IDT.h"
+#include "interrupts/PIC.h"
 #include "interrupts/syscalls.h"
 #include "interrupts/interrupts.h"
 #include "util/exceptions.h"
