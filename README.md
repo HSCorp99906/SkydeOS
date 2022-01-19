@@ -34,7 +34,7 @@ red_screen.
 Used for errors.
 
 ```
-int 0x24
+int 0xC8
 ```
 
 ### How do I get it working?
