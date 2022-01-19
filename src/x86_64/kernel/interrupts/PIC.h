@@ -10,5 +10,4 @@
 #define NEW_IRQ_0 0x20
 #define NEW_IRQ_8 0x28
 
-
 #endif
